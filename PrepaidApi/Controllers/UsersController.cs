@@ -19,7 +19,6 @@ namespace PrepaidApi.Controllers
             _context = context;
         }
 
-        // GET: api/Users
         [HttpGet]
         public async Task<ActionResult<ApiResponse<IEnumerable<User>>>> GetUsers()
         {
@@ -27,7 +26,6 @@ namespace PrepaidApi.Controllers
             return Ok(ApiResponse<IEnumerable<User>>.Success(users, "Users retrieved successfully"));
         }
 
-        // GET: api/Users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<User>>> GetUser(int id)
         {
@@ -41,7 +39,7 @@ namespace PrepaidApi.Controllers
             return Ok(ApiResponse<User>.Success(user, "User retrieved successfully"));
         }
 
-        // POST: api/Users
+
         [HttpPost]
         public async Task<ActionResult<ApiResponse<User>>> CreateUser([FromBody] CreateUserDto userDto)
         {
@@ -52,7 +50,7 @@ namespace PrepaidApi.Controllers
                 FullName = userDto.FullName,
                 PhoneNumber = userDto.PhoneNumber,
                 Balance = userDto.Balance,
-                LastUpdated = DateTime.UtcNow // System-generated
+                LastUpdated = DateTime.UtcNow
             };
 
             _context.Users.Add(user);
@@ -61,7 +59,6 @@ namespace PrepaidApi.Controllers
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, ApiResponse<User>.Success(user, "User created successfully"));
         }
 
-        // PATCH: api/Users/5/increase
         [HttpPatch("{id}/increase")]
         public async Task<ActionResult<ApiResponse<User>>> IncreaseBalance(int id, [FromBody] UpdateBalanceDto dto)
         {
@@ -77,7 +74,6 @@ namespace PrepaidApi.Controllers
             return Ok(ApiResponse<User>.Success(user, "Balance increased successfully"));
         }
 
-        // PATCH: api/Users/5/decrease
         [HttpPatch("{id}/decrease")]
         public async Task<ActionResult<ApiResponse<User>>> DecreaseBalance(int id, [FromBody] UpdateBalanceDto dto)
         {
@@ -95,7 +91,6 @@ namespace PrepaidApi.Controllers
             return Ok(ApiResponse<User>.Success(user, "Balance decreased successfully"));
         }
 
-        // DELETE: api/Users/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<ApiResponse<object?>>> DeleteUser(int id)
         {

@@ -15,12 +15,11 @@ namespace PrepaidApi.Data
         {
             modelBuilder.Entity<User>().HasIndex(u => u.PhoneNumber).IsUnique();
 
-            // Store balance in Kobo (int) but keep it as decimal (NGN) in the C# model
             modelBuilder.Entity<User>()
                 .Property(u => u.Balance)
                 .HasConversion(
-                    ngn => (int)(ngn * 100),       // Convert NGN to Kobo for DB
-                    kobo => (decimal)kobo / 100m   // Convert Kobo to NGN for C#
+                    ngn => (int)(ngn * 100),
+                    kobo => (decimal)kobo / 100m
                 )
                 .HasColumnType("INT");
         }
