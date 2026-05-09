@@ -13,13 +13,13 @@ namespace PrepaidApi.DTOs
         public long PhoneNumber { get; set; } = 12345678900;
 
         [Range(0, double.MaxValue, ErrorMessage = "Initial balance must be zero or positive.")]
-        public int Balance { get; set; } = 0;
+        public decimal Balance { get; set; } = 0;
     }
 
     public class UpdateBalanceDto
     {
         [Required]
         [Range(0.01, double.MaxValue, ErrorMessage = "Amount must be a positive number (no negatives or zero allowed).")]
-        public int Amount { get; set; } = 0;
+        public decimal Amount { get; set; } = 0;
     }
 }
