@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PrepaidApi.Data;
 using PrepaidApi.Models;
+using PrepaidApi.DTOs;
 
 namespace PrepaidApi.Controllers
 {
@@ -18,83 +19,94 @@ namespace PrepaidApi.Controllers
 
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<ApiResponse<IEnumerable<User>>>> GetUsers()
         {
-            return await _context.Users.ToListAsync();
+            var users = await _context.Users.ToListAsync();
+            return Ok(ApiResponse<IEnumerable<User>>.Success(users, "Users retrieved successfully"));
         }
 
         // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<ActionResult<ApiResponse<User>>> GetUser(int id)
         {
             var user = await _context.Users.FindAsync(id);
 
             if (user == null)
             {
-                return NotFound();
+                return NotFound(ApiResponse<User>.Error("User not found"));
             }
 
-            return user;
+            return Ok(ApiResponse<User>.Success(user, "User retrieved successfully"));
         }
 
         // POST: api/Users
         [HttpPost]
-        public async Task<ActionResult<User>> CreateUser(User user)
+        public async Task<ActionResult<ApiResponse<User>>> CreateUser([FromBody] CreateUserDto userDto)
         {
+            if (!ModelState.IsValid) return BadRequest(ApiResponse<object>.Error("Invalid input"));
+
+            var user = new User
+            {
+                FullName = userDto.FullName,
+                PhoneNumber = userDto.PhoneNumber,
+                Balance = userDto.Balance,
+                LastUpdated = DateTime.UtcNow // System-generated
+            };
+
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
+            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, ApiResponse<User>.Success(user, "User created successfully"));
         }
 
         // PATCH: api/Users/5/increase
         [HttpPatch("{id}/increase")]
-        public async Task<IActionResult> IncreaseBalance(int id, [FromBody] decimal amount)
+        public async Task<ActionResult<ApiResponse<User>>> IncreaseBalance(int id, [FromBody] UpdateBalanceDto dto)
         {
-            if (amount <= 0) return BadRequest("Amount must be positive.");
+            if (!ModelState.IsValid) return BadRequest(ApiResponse<object>.Error("Invalid input"));
 
             var user = await _context.Users.FindAsync(id);
-            if (user == null) return NotFound();
+            if (user == null) return NotFound(ApiResponse<User>.Error("User not found"));
 
-            user.Balance += amount;
+            user.Balance += dto.Amount;
             user.LastUpdated = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
-            return Ok(user);
+            return Ok(ApiResponse<User>.Success(user, "Balance increased successfully"));
         }
 
         // PATCH: api/Users/5/decrease
         [HttpPatch("{id}/decrease")]
-        public async Task<IActionResult> DecreaseBalance(int id, [FromBody] decimal amount)
+        public async Task<ActionResult<ApiResponse<User>>> DecreaseBalance(int id, [FromBody] UpdateBalanceDto dto)
         {
-            if (amount <= 0) return BadRequest("Amount must be positive.");
+            if (!ModelState.IsValid) return BadRequest(ApiResponse<object>.Error("Invalid input"));
 
             var user = await _context.Users.FindAsync(id);
-            if (user == null) return NotFound();
+            if (user == null) return NotFound(ApiResponse<User>.Error("User not found"));
 
-            if (user.Balance < amount) return BadRequest("Insufficient balance.");
+            if (user.Balance < dto.Amount) return BadRequest(ApiResponse<User>.Error("Insufficient balance"));
 
-            user.Balance -= amount;
+            user.Balance -= dto.Amount;
             user.LastUpdated = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
-            return Ok(user);
+            return Ok(ApiResponse<User>.Success(user, "Balance decreased successfully"));
         }
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<ActionResult<ApiResponse<object?>>> DeleteUser(int id)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null)
             {
-                return NotFound();
+                return NotFound(ApiResponse<object?>.Error("User not found"));
             }
 
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(ApiResponse<object?>.Success(null, "User deleted successfully"));
         }
     }
 }

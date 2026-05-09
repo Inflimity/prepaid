@@ -1,10 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PrepaidApi.Models
 {
     public class User
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Required]
@@ -12,10 +14,9 @@ namespace PrepaidApi.Models
         public string FullName { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(20)]
-        public string PhoneNumber { get; set; } = string.Empty;
+        public long PhoneNumber { get; set; }
 
-        [Range(0, double.MaxValue)]
+        [Range(0, double.MaxValue, ErrorMessage = "Balance must be a positive value.")]
         public decimal Balance { get; set; }
 
         public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
