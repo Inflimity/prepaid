@@ -1,0 +1,6 @@
+@PrepaidApi_HostAddress = http://localhost:5193
+
+GET {{PrepaidApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
