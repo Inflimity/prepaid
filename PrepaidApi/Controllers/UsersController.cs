@@ -3,11 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using PrepaidApi.Data;
 using PrepaidApi.Models;
 using PrepaidApi.DTOs;
+using PrepaidApi.Attributes;
 
 namespace PrepaidApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ApiKey]
     public class UsersController : ControllerBase
     {
         private readonly PrepaidContext _context;
