@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+    <title>Prepaid Balance System</title>
+  </head>
+  <body>
+    <div id="app">
+      <header class="navbar">
+        <div class="logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+          </svg>
+          <h1>Prepaid Balance System</h1>
+        </div>
+        <button id="add-user-btn" class="btn btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Add User
+        </button>
+      </header>
+
+      <main class="content">
+        <div class="card">
+          <div class="card-header">
+            <h2>User Management</h2>
+          </div>
+          <div class="table-container">
+            <table id="users-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Full Name</th>
+                  <th>Phone Number</th>
+                  <th>Balance (NGN)</th>
+                  <th>Last Updated</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="users-tbody">
+                <!-- Users will be populated here -->
+              </tbody>
+            </table>
+            <div id="loading-indicator" class="loading">Loading users...</div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Modals Overlay -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+      
+      <!-- Add User Modal -->
+      <div id="add-user-modal" class="modal hidden">
+        <div class="modal-header">
+          <h3>Add New User</h3>
+          <button class="close-btn">&times;</button>
+        </div>
+        <form id="add-user-form" class="modal-body">
+          <div class="form-group">
+            <label for="fullname">Full Name</label>
+            <input type="text" id="fullname" required placeholder="e.g. John Doe">
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="number" id="phone" required placeholder="e.g. 2348012345678">
+          </div>
+          <div class="form-group">
+            <label for="initial-balance">Initial Balance (NGN)</label>
+            <input type="number" id="initial-balance" required min="0" step="0.01" value="0">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary close-btn">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save User</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Balance Action Modal -->
+      <div id="balance-action-modal" class="modal hidden">
+        <div class="modal-header">
+          <h3 id="balance-modal-title">Update Balance</h3>
+          <button class="close-btn">&times;</button>
+        </div>
+        <form id="balance-action-form" class="modal-body">
+          <input type="hidden" id="action-user-id">
+          <input type="hidden" id="action-type">
+          <p id="action-user-name" class="action-target-text"></p>
+          <div class="form-group">
+            <label for="action-amount">Amount (NGN)</label>
+            <input type="number" id="action-amount" required min="1" step="0.01" placeholder="Enter amount">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary close-btn">Cancel</button>
+            <button type="submit" id="balance-submit-btn" class="btn">Confirm</button>
+          </div>
+        </form>
+      </div>
+      
+    </div>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
